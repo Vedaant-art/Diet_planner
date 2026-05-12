@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BMI Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --accent: #00f5a0;
+    --accent2: #00d9f5;
+    --danger: #ff4d6d;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,160,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,160,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orb */
+  body::after {
+    content: '';
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,245,160,0.06) 0%, transparent 70%);
+    top: -100px;
+    right: -100px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 460px;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeDown 0.6s ease;
+  }
+
+  .header .logo {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title span {
+    font-size: 13px;
+    font-family: var(--font-mono);
+    color: var(--accent);
+    background: rgba(0,245,160,0.08);
+    border: 1px solid rgba(0,245,160,0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  /* Form */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    transition: all 0.2s;
+    outline: none;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,245,160,0.08);
+  }
+
+  input::placeholder { color: var(--muted); }
+
+  /* Row for side-by-side inputs */
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* Button */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #000;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,245,160,0.25);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Switch link */
+  .switch-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .switch-link a {
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .switch-link a:hover { text-decoration: underline; }
+
+  /* Alert */
+  .alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: var(--font-mono);
+    margin-bottom: 20px;
+    display: none;
+    animation: fadeUp 0.3s ease;
+  }
+
+  .alert.error {
+    background: rgba(255,77,109,0.1);
+    border: 1px solid rgba(255,77,109,0.3);
+    color: var(--danger);
+    display: block;
+  }
+
+  .alert.success {
+    background: rgba(0,245,160,0.08);
+    border: 1px solid rgba(0,245,160,0.2);
+    color: var(--accent);
+    display: block;
+  }
+
+  /* BMI Result */
+  .bmi-result {
+    margin-top: 28px;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .bmi-result.show { display: block; }
+
+  .bmi-number {
+    font-size: 56px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .bmi-category {
+    font-size: 13px;
+    font-family: var(--font-mono);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .bmi-bar-wrap {
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .bmi-bar {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .bmi-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--muted);
+  }
+
+  .bmi-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .bmi-meta-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .bmi-meta-item .meta-label {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  .bmi-meta-item .meta-val {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+  }
+
+  /* Logout bar */
+  .topbar {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    animation: fadeDown 0.4s ease;
+  }
+
+  .topbar.show { display: flex; }
+
+  .topbar .user-pill {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 99px;
+  }
+
+  .topbar .logout-btn {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--danger);
+    background: none;
+    border: 1px solid rgba(255,77,109,0.3);
+    padding: 6px 12px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .topbar .logout-btn:hover {
+    background: rgba(255,77,109,0.1);
+  }
+
+  /* Loading spinner */
+  .btn.loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Page transitions */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeUp 0.4s ease; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">// health.sys</div>
+    <h1>BMI Calculator</h1>
+  </div>
+
+  <!-- Top bar (shown when logged in) -->
+  <div class="topbar" id="topbar">
+    <div class="user-pill" id="userEmail">user@email.com</div>
+    <button class="logout-btn" onclick="logout()">logout</button>
+  </div>
+
+  <!-- REGISTER PAGE -->
+  <div class="page active" id="page-register">
+    <div class="card">
+      <div class="card-title">Register <span>new</span></div>
+      <div class="alert" id="reg-alert"></div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="reg-name" placeholder="Your Name" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="Enter your email" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary" onclick="register()">Create Account</button>
+    </div>
+    <div class="switch-link">
+      Already have an account? <a onclick="showPage('login')">Login</a>
+    </div>
+  </div>
+
+  <!-- LOGIN PAGE -->
+  <div class="page" id="page-login">
+    <div class="card">
+      <div class="card-title">Login <span>auth</span></div>
+      <div class="alert" id="login-alert"></div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="you@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary" onclick="login()">Login</button>
+    </div>
+    <div class="switch-link">
+      No account? <a onclick="showPage('register')">Register</a>
+    </div>
+  </div>
+
+  <!-- BMI PAGE -->
+  <div class="page" id="page-bmi">
+    <div class="card">
+      <div class="card-title">BMI Check <span>calc</span></div>
+      <div class="alert" id="bmi-alert"></div>
+
+      <div class="form-group">
+        <label>Age (years)</label>
+        <input type="number" id="bmi-age" placeholder="19" min="1" max="120" />
+      </div>
+      <div class="input-row">
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          <input type="number" id="bmi-weight" placeholder="65" min="1" />
+        </div>
+        <div class="form-group">
+          <label>Height (cm)</label>
+          <input type="number" id="bmi-height" placeholder="170" min="1" />
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="calcBMI()">Calculate BMI</button>
+
+      <!-- Result -->
+      <div class="bmi-result" id="bmi-result">
+        <div class="bmi-number" id="res-number">--</div>
+        <div class="bmi-category" id="res-category">--</div>
+        <div class="bmi-bar-wrap">
+          <div class="bmi-bar" id="res-bar" style="width:0%"></div>
+        </div>
+        <div class="bmi-labels">
+          <span>Underweight</span>
+          <span>Normal</span>
+          <span>Overweight</span>
+          <span>Obese</span>
+        </div>
+        <div class="bmi-meta">
+          <div class="bmi-meta-item">
+            <div class="meta-label">Age</div>
+            <div class="meta-val" id="res-age">--</div>
+          </div>
+          <div class="bmi-meta-item">
+            <div class="meta-label">Weight</div>
+            <div class="meta-val" id="res-weight">--</div>
+          </div>
+          <div class="bmi-meta-item">
+            <div class="meta-label">Height</div>
+            <div class="meta-val" id="res-height">--</div>
+          </div>
+          <div class="bmi-meta-item">
+            <div class="meta-label">Status</div>
+            <div class="meta-val" id="res-status">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const API = 'http://127.0.0.1:8000';
+  let token = localStorage.getItem('token');
+  let userEmail = localStorage.getItem('userEmail');
+
+  // Init
+  if (token) {
+    showPage('bmi');
+    document.getElementById('topbar').classList.add('show');
+    document.getElementById('userEmail').textContent = userEmail || 'user';
+  }
+
+  function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+  }
+
+  function showAlert(id, msg, type) {
+    const el = document.getElementById(id);
+    el.className = 'alert ' + type;
+    el.textContent = msg;
+  }
+
+  function clearAlert(id) {
+    const el = document.getElementById(id);
+    el.className = 'alert';
+    el.textContent = '';
+  }
+
+  async function register() {
+    clearAlert('reg-alert');
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+
+    if (!name || !email || !password) {
+      return showAlert('reg-alert', 'All fields are required.', 'error');
+    }
+
+    const btn = event.target;
+    btn.textContent = 'Creating...';
+    btn.classList.add('loading');
+
+    try {
+      const res = await fetch(`${API}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Registration failed');
+      showAlert('reg-alert', '✓ Account created! Please login.', 'success');
+      setTimeout(() => showPage('login'), 1200);
+    } catch (e) {
+      showAlert('reg-alert', e.message, 'error');
+    } finally {
+      btn.textContent = 'Create Account';
+      btn.classList.remove('loading');
+    }
+  }
+
+  async function login() {
+    clearAlert('login-alert');
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!email || !password) {
+      return showAlert('login-alert', 'All fields are required.', 'error');
+    }
+
+    const btn = event.target;
+    btn.textContent = 'Logging in...';
+    btn.classList.add('loading');
+
+    try {
+      const formData = new URLSearchParams();
+      formData.append('username', email);
+      formData.append('password', password);
+
+      const res = await fetch(`${API}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Login failed');
+
+      token = data.access_token;
+      localStorage.setItem('token', token);
+      localStorage.setItem('userEmail', email);
+
+      document.getElementById('topbar').classList.add('show');
+      document.getElementById('userEmail').textContent = email;
+      showPage('bmi');
+    } catch (e) {
+      showAlert('login-alert', e.message, 'error');
+    } finally {
+      btn.textContent = 'Login';
+      btn.classList.remove('loading');
+    }
+  }
+
+  async function calcBMI() {
+    clearAlert('bmi-alert');
+    const age = parseInt(document.getElementById('bmi-age').value);
+    const weight = parseFloat(document.getElementById('bmi-weight').value);
+    const height = parseFloat(document.getElementById('bmi-height').value);
+
+    if (!age || !weight || !height) {
+      return showAlert('bmi-alert', 'All fields are required.', 'error');
+    }
+
+    const btn = event.target;
+    btn.textContent = 'Calculating...';
+    btn.classList.add('loading');
+
+    try {
+      const res = await fetch(`${API}/bmi`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ age, weight, height })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Calculation failed');
+      showResult(data);
+    } catch (e) {
+      showAlert('bmi-alert', e.message, 'error');
+    } finally {
+      btn.textContent = 'Calculate BMI';
+      btn.classList.remove('loading');
+    }
+  }
+
+  function showResult(data) {
+    const bmi = data.bmi;
+    const category = data.category;
+
+    // Color based on category
+    const colors = {
+      'Underweight': '#00d9f5',
+      'Normal weight': '#00f5a0',
+      'Overweight': '#f5a000',
+      'Obese': '#ff4d6d'
+    };
+    const color = colors[category] || '#00f5a0';
+
+    // Bar width: map BMI 10-40 to 0-100%
+    const barWidth = Math.min(100, Math.max(0, ((bmi - 10) / 30) * 100));
+
+    document.getElementById('res-number').textContent = bmi;
+    document.getElementById('res-number').style.color = color;
+    document.getElementById('res-category').textContent = category;
+    document.getElementById('res-category').style.color = color;
+    document.getElementById('res-bar').style.width = barWidth + '%';
+    document.getElementById('res-bar').style.background = `linear-gradient(90deg, #00f5a0, ${color})`;
+    document.getElementById('res-age').textContent = data.age + ' yrs';
+    document.getElementById('res-weight').textContent = document.getElementById('bmi-weight').value + ' kg';
+    document.getElementById('res-height').textContent = document.getElementById('bmi-height').value + ' cm';
+    document.getElementById('res-status').textContent = category.split(' ')[0];
+    document.getElementById('res-status').style.color = color;
+
+    document.getElementById('bmi-result').classList.add('show');
+  }
+
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    token = null;
+    document.getElementById('topbar').classList.remove('show');
+    document.getElementById('bmi-result').classList.remove('show');
+    showPage('login');
+  }
+</script>
+</body>
+</html>
