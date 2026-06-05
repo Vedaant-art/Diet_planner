@@ -58,3 +58,6 @@ class SavePlanInput(BaseModel):
     supplements: list
     total_calories: str
     budget: Optional[float] = None
+
+class WeightLogInput(BaseModel):
+    weight: float

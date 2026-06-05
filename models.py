@@ -40,3 +40,12 @@ class UserPlan(Base):
     supplements = Column(JSON)
     total_calories = Column(String)
     budget = Column(Float, nullable=True)
+
+class WeightLog(Base):
+    __tablename__ = "weight_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True)
+    weight = Column(Float)
+    date = Column(Date, default=date.today)
+    ai_feedback = Column(String, nullable=True)
