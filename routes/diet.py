@@ -4,6 +4,8 @@ from database import get_db
 import models, schemas, auth
 from agents.calorie_agent import calculate_calories_with_ai
 from agents.diet_agent import generate_diet_plan
+from agents.progress_agent import analyze_progress
+from datetime import date as date_today
 
 router = APIRouter()
 
