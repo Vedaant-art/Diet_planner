@@ -96,3 +96,98 @@ def get_dashboard(
         "total_calories": plan.total_calories,
         "budget": plan.budget,
     }
+
+@router.post("/log-weight")
+def log_weight(
+    data: schemas.WeightLogInput,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    # Check if already logged today
+    existing = db.query(models.WeightLog).filter(
+        models.WeightLog.user_id == current_user.id,
+        models.WeightLog.date == date_today.today()
+    ).first()
+
+    if existing:
+        existing.weight = data.weight
+        existing.mood = data.mood
+        existing.notes=data.notes
+        db.commit()
+        db.refresh(existing)
+        log = existing
+    else:
+        log = models.WeightLog(
+    user_id=current_user.id,
+    weight=data.weight,
+    mood=data.mood,
+    notes=data.notes,
+    date=date_today.today()
+        )
+        db.add(log)
+        db.commit()
+        db.refresh(log)
+
+    # Get all logs for AI analysis
+    all_logs = db.query(models.WeightLog).filter(
+        models.WeightLog.user_id == current_user.id
+    ).order_by(models.WeightLog.date).all()
+
+    # Get user plan for context
+    plan = db.query(models.UserPlan).filter(
+        models.UserPlan.user_id == current_user.id
+    ).first()
+
+    if plan and len(all_logs) > 0:
+        logs_list = [{"weight": l.weight, "date": str(l.date), "mood": l.mood, "notes": l.notes} for l in all_logs]
+        start_weight = all_logs[0].weight
+        weeks_elapsed = max(1, len(all_logs) // 7)
+
+        feedback = analyze_progress(
+            current_weight=data.weight,
+            target_weight=plan.target_weight,
+            start_weight=start_weight,
+            weeks_elapsed=weeks_elapsed,
+            total_weeks=plan.timeline_weeks,
+            logs=logs_list
+        )
+
+        log.ai_feedback = feedback.get("feedback", "")
+        db.commit()
+
+        return {
+            "message": "Weight logged!",
+            "weight": data.weight,
+            "date": str(date_today.today()),
+            "ai_analysis": feedback
+        }
+
+    return {"message": "Weight logged!", "weight": data.weight}
+
+
+@router.get("/progress")
+def get_progress(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    logs = db.query(models.WeightLog).filter(
+        models.WeightLog.user_id == current_user.id
+    ).order_by(models.WeightLog.date).all()
+
+    plan = db.query(models.UserPlan).filter(
+        models.UserPlan.user_id == current_user.id
+    ).first()
+
+    if not logs:
+        return {"has_logs": False}
+
+    logs_list = [{"weight": l.weight, "date": str(l.date), "feedback": l.ai_feedback} for l in logs]
+
+    return {
+        "has_logs": True,
+        "logs": logs_list,
+        "start_weight": logs[0].weight,
+        "current_weight": logs[-1].weight,
+        "target_weight": plan.target_weight if plan else None,
+        "total_logs": len(logs)
+    }

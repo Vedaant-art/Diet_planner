@@ -47,5 +47,8 @@ class WeightLog(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, index=True)
     weight = Column(Float)
+    mood = Column(String, nullable=True)      # "great", "good", "okay", "bad"
+    notes = Column(String, nullable=True)
     date = Column(Date, default=date.today)
     ai_feedback = Column(String, nullable=True)
+

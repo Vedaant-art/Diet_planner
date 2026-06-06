@@ -61,3 +61,5 @@ class SavePlanInput(BaseModel):
 
 class WeightLogInput(BaseModel):
     weight: float
+    mood: Optional[str] = None      # "great", "good", "okay", "bad"
+    notes: Optional[str] = None
