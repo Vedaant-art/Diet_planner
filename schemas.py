@@ -63,3 +63,9 @@ class WeightLogInput(BaseModel):
     weight: float
     mood: Optional[str] = None      # "great", "good", "okay", "bad"
     notes: Optional[str] = None
+
+class WorkoutInput(BaseModel):
+    goal: str
+    days_per_week: int
+    workout_type: str  # "gym", "home", "both"
+    fitness_level: str  # "beginner", "intermediate", "advanced"
