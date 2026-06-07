@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
+import Progress from "./progress";
 
 const API = "http://127.0.0.1:8000";
 
@@ -78,6 +79,7 @@ export default function Dashboard({ token, onLogout, onNewPlan }) {
             { id: "overview", icon: "⚡", label: "Overview" },
             { id: "diet", icon: "🥗", label: "Diet Plan" },
             { id: "supplements", icon: "💊", label: "Supplements" },
+            { id: "progress", icon: "📈", label: "Progress" },
           ].map(item => (
             <button key={item.id}
               style={activeTab === item.id ? s.navItemActive : s.navItem}
@@ -111,6 +113,9 @@ export default function Dashboard({ token, onLogout, onNewPlan }) {
               {activeTab === "overview" && "Health Overview"}
               {activeTab === "diet" && "Your Diet Plan"}
               {activeTab === "supplements" && "Supplements"}
+              {activeTab === "progress" && (
+                <Progress token={token} onBack={() => setActiveTab("overview")} />
+              )}
             </h1>
             <p style={s.pageDate}>Last updated: {data.date_created}</p>
           </div>
