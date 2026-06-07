@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
-import Progress from "./progress";
+import Progress from "./Progress";
 
 const API = "http://127.0.0.1:8000";
 
