@@ -6,7 +6,7 @@ from agents.calorie_agent import calculate_calories_with_ai
 from agents.diet_agent import generate_diet_plan
 from agents.progress_agent import analyze_progress
 from datetime import date as date_today
-
+from agents.workout_agent import generate_workout_plan
 router = APIRouter()
 
 @router.post("/goal")
@@ -191,3 +191,16 @@ def get_progress(
         "target_weight": plan.target_weight if plan else None,
         "total_logs": len(logs)
     }
+
+@router.post("/workout-plan")
+def get_workout_plan(
+    data: schemas.WorkoutInput,
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    result = generate_workout_plan(
+        goal=data.goal,
+        days_per_week=data.days_per_week,
+        workout_type=data.workout_type,
+        fitness_level=data.fitness_level
+    )
+    return result
