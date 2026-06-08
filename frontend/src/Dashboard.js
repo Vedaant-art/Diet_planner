@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
 import Progress from "./Progress";
-
+import Workout from "./Workout";
 const API = "http://127.0.0.1:8000";
 
 const getCategoryColor = (category) => {
@@ -80,6 +80,7 @@ export default function Dashboard({ token, onLogout, onNewPlan }) {
             { id: "diet", icon: "🥗", label: "Diet Plan" },
             { id: "supplements", icon: "💊", label: "Supplements" },
             { id: "progress", icon: "📈", label: "Progress" },
+            { id: "workout", icon: "💪", label: "Workout" },
           ].map(item => (
             <button key={item.id}
               style={activeTab === item.id ? s.navItemActive : s.navItem}
@@ -114,7 +115,10 @@ export default function Dashboard({ token, onLogout, onNewPlan }) {
               {activeTab === "diet" && "Your Diet Plan"}
               {activeTab === "supplements" && "Supplements"}
               {activeTab === "progress" && (
-                <Progress token={token} onBack={() => setActiveTab("overview")} />
+                <Progress token={token} onBack={() => setActiveTab("overview")} userGoal={data.goal} />
+              )}
+              {activeTab === "workout" && (
+                <Workout token={token} onBack={() => setActiveTab("overview")} userGoal={data.goal} />
               )}
             </h1>
             <p style={s.pageDate}>Last updated: {data.date_created}</p>
