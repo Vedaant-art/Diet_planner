@@ -61,7 +61,7 @@ function Auth({ onLogin }) {
 
   return (
     <div style={styles.card}>
-      <h1 style={styles.title}>🥗 BMI Calculator</h1>
+      <h1 style={styles.title}>NutriPlan</h1>
 
       {/* Tabs */}
       <div style={styles.tabs}>
