@@ -71,7 +71,7 @@ export default function Dashboard({ token, onLogout, onNewPlan }) {
       <aside style={s.sidebar}>
         <div style={s.logoWrap}>
           <span style={s.logoIcon}>🧬</span>
-          <span style={s.logoText}>NutriAI</span>
+          <span style={s.logoText}>NutriPlan</span>
         </div>
 
         <nav style={s.navList}>
