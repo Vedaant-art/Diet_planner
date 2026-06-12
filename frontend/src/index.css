@@ -7,11 +7,191 @@
 html, body, #root {
   height: 100%;
   width: 100%;
-  background-color: #0f0f0f;
+  background-color: #0f0726;
   color: #ffffff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(167,139,250,0.3); border-radius: 3px; }
+
+/* ── Buttons ── */
 button {
   cursor: pointer;
+  transition: all 0.2s ease !important;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0px) scale(0.98);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Inputs & Selects ── */
+input, select, textarea {
+  transition: all 0.2s ease !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: rgba(167,139,250,0.6) !important;
+  box-shadow: 0 0 0 3px rgba(167,139,250,0.1) !important;
+}
+
+input:hover, select:hover, textarea:hover {
+  border-color: rgba(167,139,250,0.3) !important;
+}
+
+/* ── Cards ── */
+.hover-card {
+  transition: all 0.25s ease !important;
+}
+
+.hover-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(167,139,250,0.15) !important;
+  border-color: rgba(167,139,250,0.25) !important;
+}
+
+/* ── Nav Items ── */
+.nav-item {
+  transition: all 0.2s ease !important;
+}
+
+.nav-item:hover {
+  background: rgba(167,139,250,0.08) !important;
+  color: rgba(255,255,255,0.8) !important;
+  transform: translateX(4px);
+}
+
+/* ── Clickable rows ── */
+.clickable {
+  transition: all 0.2s ease !important;
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background: rgba(167,139,250,0.06) !important;
+  border-color: rgba(167,139,250,0.2) !important;
+}
+
+/* ── Stat cards ── */
+.stat-card {
+  transition: all 0.25s ease !important;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(167,139,250,0.2) !important;
+  border-color: rgba(167,139,250,0.3) !important;
+}
+
+/* ── Meal cards ── */
+.meal-card {
+  transition: all 0.25s ease !important;
+}
+
+.meal-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(167,139,250,0.12) !important;
+  border-color: rgba(167,139,250,0.2) !important;
+}
+
+/* ── Mood buttons ── */
+.mood-btn {
+  transition: all 0.2s ease !important;
+}
+
+.mood-btn:hover {
+  transform: scale(1.08) !important;
+  border-color: rgba(167,139,250,0.4) !important;
+  background: rgba(167,139,250,0.08) !important;
+}
+
+/* ── Day tabs ── */
+.day-tab {
+  transition: all 0.2s ease !important;
+}
+
+.day-tab:hover {
+  transform: translateY(-3px);
+  border-color: rgba(167,139,250,0.4) !important;
+  background: rgba(167,139,250,0.08) !important;
+}
+
+/* ── Exercise items ── */
+.exercise-item {
+  transition: all 0.2s ease !important;
+}
+
+.exercise-item:hover {
+  background: rgba(167,139,250,0.08) !important;
+  border-color: rgba(167,139,250,0.2) !important;
+  transform: translateX(4px);
+}
+
+/* ── Toggle ── */
+.toggle {
+  transition: all 0.3s ease !important;
+}
+
+.toggle:hover {
+  box-shadow: 0 0 12px rgba(167,139,250,0.4) !important;
+}
+
+/* ── Links / text buttons ── */
+.text-btn {
+  transition: color 0.2s ease !important;
+  cursor: pointer;
+}
+
+.text-btn:hover {
+  color: #a78bfa !important;
+}
+
+/* ── Glow effect for primary buttons ── */
+.btn-primary:hover {
+  box-shadow: 0 6px 24px rgba(124,58,237,0.5) !important;
+}
+
+/* ── Input range slider ── */
+input[type="range"] {
+  accent-color: #a78bfa;
+}
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.pulse {
+  animation: pulse 2s ease infinite;
 }

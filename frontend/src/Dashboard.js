@@ -139,7 +139,8 @@ export default function Dashboard({ token, onLogout, onNewPlan }) {
                   { label: "Daily Calories", value: data.daily_calories, icon: "🔥", sub: data.deficit_surplus },
                   { label: "Timeline", value: `${data.timeline_weeks}w`, icon: "📅", sub: `Goal: ${data.goal?.replace("_", " ")}` },
                 ].map((c, i) => (
-                  <div key={i} style={s.statCard}>
+                  <div key={i} style={s.statCard} className="stat-card">
+         
                     <div style={s.statTop}>
                       <p style={s.statLabel}>{c.label}</p>
                       <span style={s.statIcon}>{c.icon}</span>
