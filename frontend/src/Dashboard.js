@@ -83,6 +83,7 @@ export default function Dashboard({ token, onLogout, onNewPlan }) {
             { id: "workout", icon: "💪", label: "Workout" },
           ].map(item => (
             <button key={item.id}
+            className="nav-item"
               style={activeTab === item.id ? s.navItemActive : s.navItem}
               onClick={() => setActiveTab(item.id)}>
               <span style={s.navIcon}>{item.icon}</span>
@@ -241,7 +242,7 @@ export default function Dashboard({ token, onLogout, onNewPlan }) {
             <>
               <div style={s.dietGrid}>
                 {data.meals && Object.entries(data.meals).map(([key, meal]) => (
-                  <div key={key} style={s.mealCard}>
+                  <div key={key} style={s.mealCard} className="meal-card">
                     <div style={s.mealTop}>
                       <p style={s.mealType}>{mealLabels[key] || key}</p>
                       <span style={s.calPill}>{meal.calories} kcal</span>

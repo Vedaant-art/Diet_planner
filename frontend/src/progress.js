@@ -140,7 +140,7 @@ export default function Progress({ token, onBack }) {
             <label style={s.label}>How are you feeling?</label>
             <div style={s.moodRow}>
               {moods.map(m => (
-                <button key={m.value}
+                <button key={m.value} className="mood-btn"
                   style={logForm.mood === m.value ? s.moodBtnActive : s.moodBtn}
                   onClick={() => setLogForm({ ...logForm, mood: m.value })}>
                   <span style={{ fontSize: "24px" }}>{m.emoji}</span>

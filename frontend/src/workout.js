@@ -149,7 +149,7 @@ export default function Workout({ token, onBack, userGoal }) {
               const isRest = day.type === "Rest";
               const isActive = selectedDay === i;
               return (
-                <button key={i} style={{
+                <button key={i} className="day-tab" style={{
                   ...s.dayTab,
                   background: isActive ? "rgba(167,139,250,0.15)" : "rgba(255,255,255,0.03)",
                   border: isActive ? "1px solid rgba(167,139,250,0.4)" : "1px solid rgba(255,255,255,0.06)",
@@ -206,7 +206,7 @@ export default function Workout({ token, onBack, userGoal }) {
                 <div style={s.exerciseList}>
                   <p style={s.exerciseTitle}>EXERCISES</p>
                   {selectedDayData.exercises?.split(',').map((ex, i) => (
-                    <div key={i} style={s.exerciseItem}>
+                    <div key={i} style={s.exerciseItem} className="exercise-item">
                       <span style={s.exerciseNum}>{i + 1}</span>
                       <span style={s.exerciseText}>{ex.trim()}</span>
                     </div>
