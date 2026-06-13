@@ -204,3 +204,24 @@ def get_workout_plan(
         fitness_level=data.fitness_level
     )
     return result
+
+@router.post("/assistant")
+def chat_assistant(
+    data: schemas.AssistantInput,
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    from groq import Groq
+    from dotenv import load_dotenv
+    import os
+    load_dotenv()
+
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+    chat_completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "system", "content": data.system}] + data.messages,
+        max_tokens=500,
+        temperature=0.7
+    )
+
+    return {"response": chat_completion.choices[0].message.content}

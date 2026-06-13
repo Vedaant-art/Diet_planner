@@ -69,3 +69,7 @@ class WorkoutInput(BaseModel):
     days_per_week: int
     workout_type: str  # "gym", "home", "both"
     fitness_level: str  # "beginner", "intermediate", "advanced"
+
+class AssistantInput(BaseModel):
+    messages: list
+    system: str
