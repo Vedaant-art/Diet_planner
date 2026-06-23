@@ -226,7 +226,7 @@ def chat_assistant(
 
     return {"response": chat_completion.choices[0].message.content}
 
-@router.post("/chat-history")
+@router.get("/chat-history")
 def get_chat_history(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user)
@@ -264,3 +264,4 @@ def clear_chat_history(
     ).delete()
     db.commit()
     return {"message": "cleared"}
+
