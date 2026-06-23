@@ -73,3 +73,7 @@ class WorkoutInput(BaseModel):
 class AssistantInput(BaseModel):
     messages: list
     system: str
+
+class ChatMessageInput(BaseModel):
+    role: str
+    content: str

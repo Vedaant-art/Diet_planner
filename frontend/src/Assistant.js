@@ -12,21 +12,59 @@ You ONLY answer questions related to:
 - Indian food and diet culture
 
 If asked anything outside these topics, politely redirect to health/fitness topics.
-Keep responses concise, friendly, and actionable. Use emojis to make it engaging.
+Keep responses concise, friendly, and actionable. Use emojis occasionally to make it engaging.
 Always give practical, safe advice and recommend consulting a doctor for medical issues.`;
+
+const DEFAULT_MSG = {
+  role: "assistant",
+  content: "Hey! 👋 I'm your NutriAI Assistant. Ask me anything about health, fitness, or nutrition!",
+};
 
 export default function Assistant({ token }) {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      role: "assistant",
-      content: "Hey! 👋 I'm your NutriAI Assistant. Ask me anything about health, fitness, or nutrition!",
-    },
-  ]);
+  const [messages, setMessages] = useState([DEFAULT_MSG]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch(`${API}/chat-history`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.messages && data.messages.length > 0) {
+        setMessages(data.messages);
+      }
+    } catch {}
+    setHistoryLoaded(true);
+  };
+
+  const saveMessage = async (role, content) => {
+    try {
+      await fetch(`${API}/chat-history`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ role, content }),
+      });
+    } catch {}
+  };
+
+  const clearChat = async () => {
+    try {
+      await fetch(`${API}/chat-history`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch {}
+    setMessages([DEFAULT_MSG]);
+  };
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,6 +81,7 @@ export default function Assistant({ token }) {
     setMessages(prev => [...prev, userMsg]);
     setInput("");
     setLoading(true);
+    saveMessage("user", userMsg.content);
 
     try {
       const res = await fetch(`${API}/assistant`, {
@@ -56,11 +95,16 @@ export default function Assistant({ token }) {
       const data = await res.json();
       if (res.ok) {
         setMessages(prev => [...prev, { role: "assistant", content: data.response }]);
+        saveMessage("assistant", data.response);
       } else {
-        setMessages(prev => [...prev, { role: "assistant", content: "Sorry, I couldn't process that. Try again! 🙏" }]);
+        const errMsg = "Sorry, I couldn't process that. Try again! 🙏";
+        setMessages(prev => [...prev, { role: "assistant", content: errMsg }]);
+        saveMessage("assistant", errMsg);
       }
     } catch {
-      setMessages(prev => [...prev, { role: "assistant", content: "Server error. Please try again! 🙏" }]);
+      const errMsg = "Server error. Please try again! 🙏";
+      setMessages(prev => [...prev, { role: "assistant", content: errMsg }]);
+      saveMessage("assistant", errMsg);
     }
     setLoading(false);
   };
@@ -68,7 +112,6 @@ export default function Assistant({ token }) {
   const handleKey = (e) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   };
-
   return (
     <>
       {/* Chat Window */}
@@ -84,10 +127,7 @@ export default function Assistant({ token }) {
               </div>
             </div>
             <div style={s.headerActions}>
-              <button style={s.iconBtn} onClick={() => setMessages([{
-                role: "assistant",
-                content: "Hey! 👋 I'm your NutriAI Assistant. Ask me anything about health, fitness, or nutrition!",
-              }])} title="Clear chat">🗑️</button>
+              <button style={s.iconBtn} onClick={clearChat} title="Clear chat">🗑️</button>
               <button style={s.iconBtn} onClick={() => setOpen(false)}>✕</button>
             </div>
           </div>

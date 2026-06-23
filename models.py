@@ -52,3 +52,12 @@ class WeightLog(Base):
     date = Column(Date, default=date.today)
     ai_feedback = Column(String, nullable=True)
 
+class ChatHistory(Base):
+    __tablename__ = "chat_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True)
+    role = Column(String)       # "user" or "assistant"
+    content = Column(String)
+    timestamp = Column(Date, default=date.today)   
+

@@ -225,3 +225,42 @@ def chat_assistant(
     )
 
     return {"response": chat_completion.choices[0].message.content}
+
+@router.post("/chat-history")
+def get_chat_history(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    history = db.query(models.ChatHistory).filter(
+        models.ChatHistory.user_id == current_user.id
+    ).order_by(models.ChatHistory.id).all()
+
+    return {
+        "messages": [{"role": h.role, "content": h.content} for h in history]
+    }
+
+@router.post("/chat-history")
+def save_chat_message(
+    data: schemas.ChatMessageInput,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    msg = models.ChatHistory(
+        user_id=current_user.id,
+        role=data.role,
+        content=data.content
+    )
+    db.add(msg)
+    db.commit()
+    return {"message": "saved"}
+
+@router.delete("/chat-history")
+def clear_chat_history(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    db.query(models.ChatHistory).filter(
+        models.ChatHistory.user_id == current_user.id
+    ).delete()
+    db.commit()
+    return {"message": "cleared"}
