@@ -77,3 +77,11 @@ class AssistantInput(BaseModel):
 class ChatMessageInput(BaseModel):
     role: str
     content: str
+
+class UpdateProfileInput(BaseModel):
+    name: Optional[str] = None
+    avatar: Optional[str] = None
+
+class ChangePasswordInput(BaseModel):
+    current_password: str
+    new_password: str
