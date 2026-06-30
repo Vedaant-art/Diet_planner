@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, JSON, Date
+from sqlalchemy import Column, Integer, String, Float, JSON, Date, Text
 from datetime import date
 from database import Base
 
@@ -9,6 +9,7 @@ class User(Base):
     name = Column(String)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    avatar = Column(String, nullable=True)
 
 class UserPlan(Base):
     __tablename__ = "user_plans"
@@ -59,13 +60,4 @@ class ChatHistory(Base):
     user_id = Column(Integer, index=True)
     role = Column(String)       # "user" or "assistant"
     content = Column(String)
-    timestamp = Column(Date, default=date.today)   
-
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    avatar = Column(String, nullable=True)  # emoji or color code
+    timestamp = Column(Date, default=date.today)

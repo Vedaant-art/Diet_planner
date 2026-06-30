@@ -2,11 +2,13 @@ import { useState } from "react";
 import Auth from "./Auth";
 import BMI from "./BMI";
 import Dashboard from "./Dashboard";
-import "./App.css";
+import Profile from "./Profile";
 import Assistant from "./Assistant";
+import "./App.css";
+
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
-  const [view, setView] = useState("dashboard"); // "dashboard" or "planner"
+  const [view, setView] = useState("dashboard"); // "dashboard" | "planner" | "profile"
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -15,18 +17,19 @@ function App() {
 
   if (!token) return <Auth onLogin={(t) => { setToken(t); setView("dashboard"); }} />;
 
-  if (view === "planner") {
-    return (
-      <>
-        <BMI 
-          token={token}
-          onLogout={handleLogout}
-          onDashboard={() => setView("dashboard")}
-        />
-        {token && <Assistant token={token} />}
-      </>
-    );
-  }
+  if (view === "planner") return (
+    <>
+      <BMI token={token} onLogout={handleLogout} onDashboard={() => setView("dashboard")} />
+      <Assistant token={token} />
+    </>
+  );
+
+  if (view === "profile") return (
+    <>
+      <Profile token={token} onLogout={handleLogout} onBack={() => setView("dashboard")} />
+      <Assistant token={token} />
+    </>
+  );
 
   return (
     <>
@@ -34,8 +37,9 @@ function App() {
         token={token}
         onLogout={handleLogout}
         onNewPlan={() => setView("planner")}
+        onProfile={() => setView("profile")}
       />
-      {token && <Assistant token={token} />}
+      <Assistant token={token} />
     </>
   );
 }

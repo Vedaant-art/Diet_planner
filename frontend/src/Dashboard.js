@@ -24,7 +24,7 @@ const mealLabels = {
   dinner: "🌙 Dinner",
 };
 
-export default function Dashboard({ token, onLogout, onNewPlan }) {
+export default function Dashboard({ token, onLogout, onNewPlan, onProfile }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
@@ -112,21 +112,16 @@ export default function Dashboard({ token, onLogout, onNewPlan }) {
         <div style={s.topbar}>
           <div>
             <h1 style={s.pageTitle}>
-              {activeTab === "overview" && "Health Overview"}
-              {activeTab === "diet" && "Your Diet Plan"}
-              {activeTab === "supplements" && "Supplements"}
-              {activeTab === "progress" && (
-                <Progress token={token} onBack={() => setActiveTab("overview")} userGoal={data.goal} />
-              )}
-              {activeTab === "workout" && (
-                <Workout token={token} onBack={() => setActiveTab("overview")} userGoal={data.goal} />
-              )}
+                {activeTab === "overview" && "Health Overview"}
+                {activeTab === "diet" && "Your Diet Plan"}
+                {activeTab === "supplements" && "Supplements"}
             </h1>
             <p style={s.pageDate}>Last updated: {data.date_created}</p>
-          </div>
-          <div style={s.avatarLg}>{data.user_name?.[0]?.toUpperCase()}</div>
         </div>
-
+              <button style={s.avatarLg} onClick={onProfile} title="Settings">
+                 {data.user_name?.[0]?.toUpperCase()}
+              </button>
+        </div>
         <div style={s.scrollArea}>
 
           {/* ── OVERVIEW ── */}
