@@ -117,11 +117,22 @@ export default function Dashboard({ token, onLogout, onNewPlan, onProfile }) {
                 {activeTab === "supplements" && "Supplements"}
             </h1>
             <p style={s.pageDate}>Last updated: {data.date_created}</p>
-        </div>
+            </div>
               <button style={s.avatarLg} onClick={onProfile} title="Settings">
                  {data.user_name?.[0]?.toUpperCase()}
-              </button>
-        </div>
+                  </button>
+          </div>
+              {activeTab === "progress" && (
+             <Progress token={token} onBack={() => setActiveTab("overview")} />
+              )}
+
+                {activeTab === "workout" && (
+             <Workout
+                token={token}
+                onBack={() => setActiveTab("overview")}
+                userGoal={data.goal}
+                />
+              )}
         <div style={s.scrollArea}>
 
           {/* ── OVERVIEW ── */}
